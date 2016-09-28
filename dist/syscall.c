@@ -126,6 +126,34 @@ static int (*syscalls[])(void) = {
 };
 
 // put data structure for printing out system call invocation information here
+// This is basically an enum, but can get called differently 
+#ifdef PRINT_SYSCALLS
+char* (sysname[]) = {
+[SYS_fork]    "sys_fork",
+[SYS_exit]    "sys_exit",
+[SYS_wait]    "sys_wait",
+[SYS_pipe]    "sys_pipe",
+[SYS_read]    "sys_read",
+[SYS_kill]    "sys_kill",
+[SYS_exec]    "sys_exec",
+[SYS_fstat]   "sys_fstat",
+[SYS_chdir]   "sys_chdir",
+[SYS_dup]     "sys_dup",
+[SYS_getpid]  "sys_getpid",
+[SYS_sbrk]    "sys_sbrk",
+[SYS_sleep]   "sys_sleep",
+[SYS_uptime]  "sys_uptime",
+[SYS_open]    "sys_open",
+[SYS_write]   "sys_write",
+[SYS_mknod]   "sys_mknod",
+[SYS_unlink]  "sys_unlink",
+[SYS_link]    "sys_link",
+[SYS_mkdir]   "sys_mkdir",
+[SYS_close]   "sys_close",
+[SYS_halt]    "sys_halt",
+};
+#endif
+
 
 void
 syscall(void)
@@ -135,7 +163,13 @@ syscall(void)
   num = proc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     proc->tf->eax = syscalls[num]();
-// some code goes here
+    //Start of Project 1  
+    //cprintf("Syscall Happening '\n'");
+
+    #ifdef PRINT_SYSCALLS
+    cprintf("\n \t \t \t  %s -> %d \n", sysname[num], proc->tf->eax );
+    #endif
+
   } else {
     cprintf("%d %s: unknown sys call %d\n",
             proc->pid, proc->name, num);
