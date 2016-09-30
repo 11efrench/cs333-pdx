@@ -100,6 +100,9 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_halt(void);
 
+//Student functions
+extern int sys_date(void);
+
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
@@ -123,6 +126,10 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_halt]    sys_halt,
+
+//Student Functions
+[SYS_date]    sys_date,
+
 };
 
 // put data structure for printing out system call invocation information here

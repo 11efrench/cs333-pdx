@@ -30,3 +30,5 @@ SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(halt)
+//Student Implementations 
+SYSCALL(date)

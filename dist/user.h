@@ -24,6 +24,12 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int halt(void);
+//Student Implementations
+
+//I have no idea why this prototype is different
+//than the implementation
+int date(struct rtcdate*);
+
 
 // ulib.c
 int stat(char*, struct stat*);

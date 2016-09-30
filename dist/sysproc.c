@@ -97,3 +97,20 @@ int sys_halt(void){
   return 0;
 }
 
+int sys_date(void){
+
+    struct rtcdate* d;
+
+    if(argptr(0, (void*)&d, sizeof(*d)) <0)
+        return -1;
+    
+    else {
+        d = (void*) argptr(0, (void*)&d, sizeof(*d) );
+        cmostime(d);
+          cprintf(" day: %d month: %d year: %d \t hour: %d minute: %d second: %d \n", d->day, d->month, d->year, d->hour, d->minute, d->second);
+    return 0;
+    }
+
+    return 0;
+}
+
