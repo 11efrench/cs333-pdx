@@ -18,10 +18,13 @@ int main (int argc, char* argv[]){
         exit();
     }
 
-     date(&r);
+    
+    if( date(&r) == 0){
+
     printf(1, "day: %d month: %d year: %d \t hour: %d minute: %d second: %d \n", r.day, r.month, r.year, r.hour, r.minute, r.second);
 
     exit();
+    }
 }
         
 
