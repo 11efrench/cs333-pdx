@@ -1,0 +1,83 @@
+\documentclass[12pt,letterpaper]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\author{Your Name Here}
+\title{Document Title Here}
+\begin{document}
+	\maketitle
+	
+	This document gives a \textit{partial} example for how to write a project report for CS333. Students may use any and all material in this document without attribution. 
+	
+	The testing section must contain sufficient proof that your project works as required. Sometimes, this will require some careful thought on your part. We do read the reports carefully and you must convince us that you did what you were required to do. Do not assume that we will merely read all your code and run our own test (we will); you must also \textit{show} us convincing proof that your project is correct. For example, the \texttt{date} command can be tricky to show that it is correct (you should think about why this is the case) and so a suggestion on how to test it is provided. You are free to use the provided approach or any other convincing approach.
+	
+	
+	\section*{Description}
+	
+	This project familiarized me with the xv6 build environment and these topics:
+	\begin{enumerate}
+	\item Conditional compilation
+	\item Implementing system call tracing in the xv6 kernel
+	\item Implementing a new system call in xv6
+	\item Control character sequence handling by the xv6 console
+	\end{enumerate}
+	
+	
+	\section*{Deliverables}
+	
+	The principle deliverables for this project are:
+	\begin{enumerate}
+	\item Demonstrated knowledge and use of conditional compilation
+	\item A simple system call tracing facility that is activated by conditional compilation
+	\item A new system call, \texttt{date()}, that demonstrates knowledge of how to implement a new system call in xv6
+	\item A new shell command, \texttt{NAME} that demonstrates a correct implementation of the \texttt{date()} system call.
+	\item A modification to an existing kernel routine for printing debug information regarding processes and activated by the existing sequence control\,--\,P, \texttt{procdump()}
+	\end{enumerate}
+	
+	
+	
+	\section*{Implementation}
+	
+	\paragraph{Note:}Most of this section is left for the student to fill in.
+	
+	\subsection*{Modified Console Commmand}
+	The xv6 console interprets certain control sequences as commands to the console. One such command, control\,--\,p, is used to ``dump'' the state of all active processes. The control sequence is recognized in \texttt{console.c} and a routine in \texttt{proc.c}, \texttt{procdump()}, is invoked to display information on the console. The routine is implemented in \texttt{proc.c} as that is where  routines that need to use the process table, \texttt{ptable}, are located.
+	
+	The \texttt{procdump} routine was modified to display the following information regarding active processes in xv6
+	\begin{enumerate}
+	\item put the items in a list beginning here
+	\end{enumerate}
+	
+	In addition, the process structure, \texttt{proc} defined in \texttt{proc.h} was modified by $\ldots$
+	
+	
+	\section*{Testing Methodology}
+	
+	\subsection*{Modified Console Command}
+	The modified console command output is
+\begin{lstlisting}[language=C]
+// put output here
+\end{lstlisting}
+
+	This output demonstrates that the required fields
+	\begin{enumerate}
+	\item list them here again
+	\end{enumerate}
+	are present in the modified console command. This output suffices to demonstrate that the required functionality is present and correctly displayed.
+	
+	\subsection*{\texttt{date} Command}
+	Testing the \texttt{date} command is tricky. While I can show that the output of the command is in the correct format, actually showing that the information is correct takes innovation. The method that I chose has four main steps:
+	\begin{enumerate}
+	\item Run the new xv6 \texttt{date} command
+	\item Quickly exit xv6 using the ``control-a x'' sequence
+	\item Issue the Linux \texttt{date} command
+	\item Compare the two outputs
+	\end{enumerate}
+	The idea here is to show that the output of my xv6 \texttt{date} command produces a reasonable date as compared to the Linux \texttt{date} command. 
+	
+	$<$ rest of test here $>$
+	
+\end{document}
