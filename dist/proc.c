@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "asm.h"
 
 struct {
   struct spinlock lock;
@@ -69,6 +70,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  // STUDENT CODE
+  // Grab Start Time
+  p->start_ticks = (uint)ticks;
   return p;
 }
 
@@ -454,6 +458,9 @@ procdump(void)
   char *state;
   uint pc[10];
   
+  uint now;         //Snag the current ticks and cast
+  now = (uint)ticks;
+
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
@@ -461,7 +468,7 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s", p->pid, state, p->name);
+    cprintf("%d %s %s %d.%d", p->pid, state, p->name, (now - p->start_ticks) / 100, (now - p->start_ticks) % 100 );
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
