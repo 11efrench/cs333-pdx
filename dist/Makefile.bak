@@ -77,7 +77,7 @@ OBJDUMP = $(TOOLPREFIX)objdump
 #CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer
 CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -fvar-tracking -fvar-tracking-assignments -O0 -g -Wall -MD -gdwarf-2 -m32 -Werror -fno-omit-frame-pointer
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
-# CFLAGS += -DPRINT_SYSCALLS     # CS333 project 1 to print syscall traces
+#CFLAGS += -DPRINT_SYSCALLS     # CS333 project 1 to print syscall traces
 # CFLAGS += -DUSE_BUILTINS       # CS333 project to turn on shell built-ins
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
 # FreeBSD ld wants ``elf_i386_fbsd''
@@ -240,58 +240,3 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 	@echo "*** Now run 'gdb'." 1>&2
 	$(QEMU) -nographic $(QEMUOPTS) -S $(QEMUGDB)
 
-# CUT HERE
-# prepare dist for students
-# after running make dist, probably want to
-# rename it to rev0 or rev1 or so on and then
-# check in that version.
-
-EXTRA=\
-	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
-	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	printf.c umalloc.c date.h \
-	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
-	.gdbinit.tmpl gdbutil kernel.ld\
-
-dist:
-	rm -rf dist
-	mkdir dist
-	for i in $(FILES); \
-	do \
-		grep -v PAGEBREAK $$i >dist/$$i; \
-	done
-	sed '/CUT HERE/,$$d' Makefile >dist/Makefile
-	echo >dist/runoff.spec
-	cp $(EXTRA) dist
-	make print; cp xv6.pdf dist
-
-# dist-test:
-# 	rm -rf dist
-# 	make dist
-# 	rm -rf dist-test
-# 	mkdir dist-test
-# 	cp dist/* dist-test
-# 	cd dist-test; $(MAKE) qemu
-
-dist-test-nox:
-	rm -rf dist
-	make dist
-	rm -rf dist-test
-	mkdir dist-test
-	cp dist/* dist-test
-	cd dist-test; $(MAKE) qemu-nox
-
-# you can put the following line in the dist-test sections above is you use BOCHS
-# cd dist-test; $(MAKE) bochs || true
-
-# update this rule (change rev#) when it is time to
-# make a new revision.
-tar: dist
-	(tar cf - dist) | gzip >xv6-pdx-kernel.tar.gz
-# tar:
-# 	rm -rf /tmp/xv6
-# 	mkdir -p /tmp/xv6
-# 	cp dist/* dist/.gdbinit.tmpl /tmp/xv6
-# 	(cd /tmp; tar cf - xv6) | gzip >xv6-rev9.tar.gz  # the next one will be 9 (6/27/15)
-
-.PHONY: dist-test dist dist-test-nox

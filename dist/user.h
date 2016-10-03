@@ -26,8 +26,6 @@ int uptime(void);
 int halt(void);
 //Student Implementations
 
-//I have no idea why this prototype is different
-//than the implementation
 int date(struct rtcdate*);
 
 
