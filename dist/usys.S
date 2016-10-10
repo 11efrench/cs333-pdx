@@ -32,3 +32,10 @@ SYSCALL(uptime)
 SYSCALL(halt)
 //Student Implementations 
 SYSCALL(date)
+
+SYSCALL(getuid)
+SYSCALL(getgid)
+SYSCALL(getppid)
+
+SYSCALL(setuid)
+SYSCALL(setgid)

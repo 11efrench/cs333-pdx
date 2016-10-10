@@ -108,3 +108,34 @@ int sys_date(void){
     return 0;
 }
 
+
+uint
+sys_getuid(void)
+{
+    return 0;
+}
+
+uint
+sys_getgid(void)
+{ 
+    return 0;
+}
+
+uint
+sys_getppid(void)
+{
+    return 0;
+}
+
+int
+sys_setuid(uint v)
+{
+    return 0;
+}
+
+int
+sys_setgid(uint v)
+{
+    return 0;
+}
+
