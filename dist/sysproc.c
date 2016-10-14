@@ -112,30 +112,39 @@ int sys_date(void){
 uint
 sys_getuid(void)
 {
-    return 0;
+    return proc->uid;
 }
 
 uint
 sys_getgid(void)
 { 
-    return 0;
+    return proc->gid;
 }
 
 uint
 sys_getppid(void)
 {
-    return 0;
+
+    return proc->parent->pid;
 }
 
 int
-sys_setuid(uint v)
+sys_setuid(void)
 {
-    return 0;
+    
+
+    if(argint(0, (int*)&proc->uid)) 
+        return -1;
+    else
+        return 0;
 }
 
 int
 sys_setgid(uint v)
 {
-    return 0;
-}
 
+    if(argint(0, (int*)&proc->gid))
+        return -1;
+    else 
+        return 0;
+}

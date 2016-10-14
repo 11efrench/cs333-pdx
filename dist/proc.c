@@ -72,7 +72,9 @@ found:
 
   // STUDENT CODE
   // Grab Start Time
+  acquire(&tickslock);
   p->start_ticks = (uint)ticks;
+  release(&tickslock);
   return p;
 }
 
@@ -102,6 +104,9 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+ 
+  p->uid = INITUID;
+  p->gid = INITGID;
 }
 
 // Grow current process's memory by n bytes.
@@ -159,7 +164,9 @@ fork(void)
   safestrcpy(np->name, proc->name, sizeof(proc->name));
  
   pid = np->pid;
-
+  np->uid = proc->uid;
+  np->gid = proc->gid;
+  
   // lock to force the compiler to emit the np->state write last.
   acquire(&ptable.lock);
   np->state = RUNNABLE;
@@ -459,7 +466,10 @@ procdump(void)
   uint pc[10];
   
   uint now;         //Snag the current ticks and cast
+
+  acquire(&tickslock);
   now = (uint)ticks;
+  release(&tickslock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
