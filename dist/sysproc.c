@@ -125,6 +125,8 @@ uint
 sys_getppid(void)
 {
 
+    if(proc->pid == 1)
+        return 1;
     return proc->parent->pid;
 }
 
@@ -140,7 +142,7 @@ sys_setuid(void)
 }
 
 int
-sys_setgid(uint v)
+sys_setgid(void)
 {
 
     if(argint(0, (int*)&proc->gid))
@@ -148,3 +150,4 @@ sys_setgid(uint v)
     else 
         return 0;
 }
+

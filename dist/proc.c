@@ -7,6 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "asm.h"
+#include "uproc.h"
 
 struct {
   struct spinlock lock;
@@ -71,10 +72,13 @@ found:
   p->context->eip = (uint)forkret;
 
   // STUDENT CODE
-  // Grab Start Time
+  // Grab Start Time 
   acquire(&tickslock);
   p->start_ticks = (uint)ticks;
   release(&tickslock);
+
+  p->cpu_ticks_total = 0;
+  p->cpu_ticks_in = 0;
   return p;
 }
 
@@ -276,6 +280,7 @@ void
 scheduler(void)
 {
   struct proc *p;
+  uint now;
 
   for(;;){
     // Enable interrupts on this processor.
@@ -293,6 +298,12 @@ scheduler(void)
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
+      
+      acquire(&tickslock);
+      now = (uint)ticks;
+      release(&tickslock);
+      p->cpu_ticks_in = now;
+
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
 
@@ -320,6 +331,7 @@ void
 sched(void)
 {
   int intena;
+  uint now;
 
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
@@ -330,6 +342,13 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = cpu->intena;
+
+  acquire(&tickslock);
+  now = (uint)ticks;
+  release(&tickslock);
+
+  proc->cpu_ticks_total = proc->cpu_ticks_total + (now - proc->cpu_ticks_in);
+  
   swtch(&proc->context, cpu->scheduler);
   cpu->intena = intena;
 }
@@ -486,4 +505,61 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+
+int
+sys_getprocs(void)
+{  
+  
+  static char *states[] = {
+  [UNUSED]    "unused",
+  [EMBRYO]    "embryo",
+  [SLEEPING]  "sleep ",
+  [RUNNABLE]  "runble",
+  [RUNNING]   "run   ",
+  [ZOMBIE]    "zombie"
+  };
+
+  uint now;
+  acquire(&tickslock);
+  now = (uint)ticks;
+  release(&tickslock);
+
+
+    struct proc* p;
+    struct uproc* up;
+    int MAX = 0;
+    int i = 0;
+
+    if( argint(0, &MAX) == -1)
+        return -1;
+
+    if(argptr(1, (char**)&up, sizeof(*up)) < 0)
+        return -1;
+ 
+  acquire(&ptable.lock);
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+
+        if( p->state && i < MAX){ 
+
+            up[i].pid = p->pid;
+            up[i].uid = p->uid;
+            up[i].gid = p->gid;
+            up[i].CPU_total_ticks = p->cpu_ticks_total;
+            up[i].elapsed_ticks = now - p->start_ticks;
+            up[i].size = p->sz;
+            safestrcpy(up[i].name, p->name, sizeof(p->name));
+            safestrcpy(up[i].state, states[p->state], sizeof(p->state));
+            if(up[i].pid == 1)
+                up[i].ppid = 1;
+            else
+                up[i].ppid = p->parent->pid;
+            i++;
+        }
+  }
+  release(&ptable.lock);
+  return i;
 }
