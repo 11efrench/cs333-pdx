@@ -24,11 +24,15 @@ int main (int argc, char* argv[]){
  
     up =  malloc( sizeof(&up) * MAX);
     MAX =  getprocs(MAX, up);
-
+    
+    if(MAX < 0){
+        printf(1, "getprocs failed\n");
+    exit();
+    }
+    
     
     printf(1, "%s\t | %s\t | %s\t | %s\t | %s\t | %s | %s | %s\t | %s\t | \n", 
                 n, p,u,g,pp,tot,e,st,si);
-
     for(int  i = 0; i < MAX; i++){
  
        printf(1, " %s\t | %d\t | %d\t | %d\t | %d\t | %d.%d\t | %d.%d\t | %s\t | %d\t | \n", 

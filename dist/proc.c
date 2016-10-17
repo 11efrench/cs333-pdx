@@ -167,6 +167,7 @@ fork(void)
 
   safestrcpy(np->name, proc->name, sizeof(proc->name));
  
+  //STUDENT CODE copy all ids
   pid = np->pid;
   np->uid = proc->uid;
   np->gid = proc->gid;
@@ -497,7 +498,11 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s %d.%d", p->pid, state, p->name, (now - p->start_ticks) / 100, (now - p->start_ticks) % 100 );
+    cprintf("%d %s %s %d.%d %d.%d", p->pid, state, p->name, 
+            (now - p->start_ticks) / 100, 
+            (now - p->start_ticks) % 100,
+             p->cpu_ticks_total / 100,
+             p->cpu_ticks_total % 100);
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
