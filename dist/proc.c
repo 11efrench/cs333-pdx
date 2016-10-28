@@ -91,7 +91,17 @@ userinit(void)
 {
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
-  
+
+  // lolololol this makes sense 
+  acquire(&ptable.lock);
+  ptable.pFreeList = &ptable.proc[0];
+  for(int i = 0; i < NPROC - 1 ; i++){
+    ptable.proc[i].next = &ptable.proc[i + 1];
+  }
+  ptable.proc[NPROC - 1].next = 0;
+  release(&ptable.lock);
+
+
   p = allocproc();
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
