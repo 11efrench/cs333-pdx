@@ -12,6 +12,9 @@
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
+  struct proc *pReadyList[NUM_READY_LISTS];
+  struct proc *pFreeList;
+
 } ptable;
 
 static struct proc *initproc;

@@ -2,6 +2,7 @@
 #define NSEGS     7
 #define INITUID 0
 #define INITGID 0
+#define NUM_READY_LISTS 3
 // Per-CPU state
 struct cpu {
   uchar id;                    // Local APIC ID; index into cpus[] below
@@ -73,6 +74,8 @@ struct proc {
   uint gid;
   uint cpu_ticks_total;        
   uint cpu_ticks_in;
+  struct proc* next;
+
 };
 
 // Process memory is laid out contiguously, low addresses first:
