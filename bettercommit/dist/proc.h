@@ -4,6 +4,7 @@
 #define INITGID 0
 #define NUM_READY_LISTS 3
 #define TICKS_TO_PROMOTE 100
+#define INITBUDGET 10
 
 // Per-CPU state
 struct cpu {

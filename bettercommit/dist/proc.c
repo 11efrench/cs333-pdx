@@ -76,9 +76,7 @@ found:
   // Allocate kernel stack.
   if((p->kstack = kalloc()) == 0){
     p->state = UNUSED;
-    
     enqueue(&ptable.FreeList, p);
-    release(&ptable.lock);
     return 0;
   }
   sp = p->kstack + KSTACKSIZE;
@@ -149,7 +147,7 @@ userinit(void)
  
   p->uid = INITUID;
   p->gid = INITGID;
-
+  p->budget = INITBUDGET;
   //Project 3
   acquire(&ptable.lock);
   enqueue(&ptable.ReadyList[0], p);
@@ -702,5 +700,15 @@ dequeue(struct queue *this){
       nproc->next = 0;
       return nproc;  
 
+}
+
+int updateBudget(struct proc * this, int now){
+
+    this->budget = this->budget - (now - this->cpu_ticks_in);
+    if(this->budget <=0){
+        this->budget = INITBUDGET;
+        return 1;
+    }
+    return 0;
 }
 
