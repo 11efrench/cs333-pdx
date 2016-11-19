@@ -26,10 +26,12 @@ extern void forkret(void);
 extern void trapret(void);
 // Project 3
 // Helper Functions to manipulate the queues
-extern int queue (struct queue* this, struct proc* first); 
-extern int enqueue (struct queue* this, struct proc* nproc);
-extern  struct proc* dequeue (struct queue* this);
 
+extern int      queue (struct queue* this, struct proc* first); 
+extern int     enqueue (struct queue* this, struct proc* nproc);
+extern  struct proc* dequeue (struct queue* this);
+extern int     updateBudget(struct proc* this, int now);
+extern void    promote(); 
 
 static void wakeup1(void *chan);
 
@@ -48,16 +50,14 @@ allocproc(void)
 {
   struct proc *p;
   char *sp;
-
-  /* OLD SEARCH AND REMOVE
+  #ifndef CS333_P3
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == UNUSED)
       goto found;
   release(&ptable.lock);
   return 0;
-  */
-
+  #else
   // Project 3 Pull process from Free List
   acquire(&ptable.lock);
   p = 0;                                // Must be initialized, so assume the worst case
@@ -65,6 +65,7 @@ allocproc(void)
 
   if(p != 0)
       goto found;
+  #endif
   release(&ptable.lock);
   return 0;
 
@@ -76,7 +77,9 @@ found:
   // Allocate kernel stack.
   if((p->kstack = kalloc()) == 0){
     p->state = UNUSED;
+    acquire(&ptable.lock);
     enqueue(&ptable.FreeList, p);
+    release(&ptable.lock);
     return 0;
   }
   sp = p->kstack + KSTACKSIZE;
@@ -97,9 +100,9 @@ found:
 
   // STUDENT CODE
   // Grab Start Time 
-  acquire(&tickslock);
+//  acquire(&tickslock);
   p->start_ticks = (uint)ticks;
-  release(&tickslock);
+//  release(&tickslock);
 
   p->cpu_ticks_total = 0;
   p->cpu_ticks_in = 0;
@@ -345,9 +348,9 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
       
-      acquire(&tickslock);
+//      acquire(&tickslock);
       now = (uint)ticks;
-      release(&tickslock);
+//      release(&tickslock);
       p->cpu_ticks_in = now;
 
       swtch(&cpu->scheduler, proc->context);
@@ -368,18 +371,28 @@ void
 scheduler(void)
 {
 
-  struct proc *p = 0;
-  uint now;
   int CURRENT = 0;
+  struct proc *p = 0;
+  uint now = 0;
 
+//  acquire(&ptable.lock);
+//  ptable.PromoteAtTime = TICKS_TO_PROMOTE;
+//  release(&ptable.lock);
   for(;;){
     // Enable interrupts on this processor.
     sti();
-
+    //TODO: GET PTABLE LOCK!!!
+//    if(now >= ptable.PromoteAtTime ){
+//          promote();
+//          ptable.PromoteAtTime = ptable.PromoteAtTime + TICKS_TO_PROMOTE;
+//    }
+    if(CURRENT == NUM_READY_LISTS) //Go back to top of queue
+        CURRENT = 0;
     // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
+    acquire(&ptable.lock); // TODO: Always start at 0 for every iteration of this infinite list.
     p = dequeue(&ptable.ReadyList[CURRENT]); 
     if(p == 0){
+       CURRENT++;
         release(&ptable.lock);
         continue;
     }    
@@ -390,12 +403,12 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
       
-      acquire(&tickslock);
+//      acquire(&tickslock);
       now = (uint)ticks;
-      release(&tickslock);
+//      release(&tickslock);
       p->cpu_ticks_in = now;
-
-      swtch(&cpu->scheduler, proc->context);
+      // Is it time to promote?
+     swtch(&cpu->scheduler, proc->context);
       switchkvm();
 
       // Process is done running for now.
@@ -411,6 +424,7 @@ scheduler(void)
 void
 sched(void)
 {
+  int rc;
   int intena;
   uint now;
 
@@ -424,12 +438,20 @@ sched(void)
     panic("sched interruptible");
   intena = cpu->intena;
 
-  acquire(&tickslock);
+//  acquire(&tickslock);
   now = (uint)ticks;
-  release(&tickslock);
+//  release(&tickslock);
 
   proc->cpu_ticks_total = proc->cpu_ticks_total + (now - proc->cpu_ticks_in);
-  
+
+  //TODO: Make sure to move RUNNABLE process to lower level if it gets demoted
+  rc = updateBudget(proc, now);
+  if(rc && (proc->priority< (NUM_READY_LISTS - 1))){
+      cprintf("%s demoted, was %d, now %d\n", proc->name, proc->priority, proc->priority+1);
+      proc->priority = proc->priority+ 1;
+      //TODO: Put ready list stuff here!
+  }
+
   swtch(&proc->context, cpu->scheduler);
   cpu->intena = intena;
 }
@@ -513,7 +535,7 @@ wakeup1(void *chan)
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == SLEEPING && p->chan == chan){
       p->state = RUNNABLE;
-      enqueue(&ptable.ReadyList[0], p);
+      enqueue(&ptable.ReadyList[p->priority], p);
     }
 
 }
@@ -542,6 +564,7 @@ kill(int pid)
       // Wake process from sleep if necessary.
       if(p->state == SLEEPING){
         p->state = RUNNABLE;
+        p->priority = 0;
         enqueue(&ptable.ReadyList[0], p);
       }
       release(&ptable.lock);
@@ -573,9 +596,9 @@ procdump(void)
   
   uint now;         //Snag the current ticks and cast
 
-  acquire(&tickslock);
+//  acquire(&tickslock);
   now = (uint)ticks;
-  release(&tickslock);
+//  release(&tickslock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
@@ -584,7 +607,7 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s %d.%d %d.%d", p->pid, state, p->name, 
+    cprintf("%d %s %s %d %d.%d %d.%d", p->pid, state, p->name, p->priority,
             (now - p->start_ticks) / 100, 
             (now - p->start_ticks) % 100,
              p->cpu_ticks_total / 100,
@@ -598,7 +621,8 @@ procdump(void)
   }
 }
 
-
+//TODO: Put in sysproc.c, have it call a "getprocs(uint max, struct uproc* p)" method in proc.c that
+//does the actual copying
 int
 sys_getprocs(void)
 {  
@@ -613,9 +637,9 @@ sys_getprocs(void)
   };
 
   uint now;
-  acquire(&tickslock);
+//  acquire(&tickslock);
   now = (uint)ticks;
-  release(&tickslock);
+//  release(&tickslock);
 
 
     struct proc* p;
@@ -642,6 +666,7 @@ sys_getprocs(void)
             up[i].CPU_total_ticks = p->cpu_ticks_total;
             up[i].elapsed_ticks = now - p->start_ticks;
             up[i].size = p->sz;
+//            up[i].priority = p->priority;
             safestrcpy(up[i].name, p->name, sizeof(p->name));
             safestrcpy(up[i].state, states[p->state], sizeof(p->state));
             if(up[i].pid == 1)
@@ -702,7 +727,8 @@ dequeue(struct queue *this){
 
 }
 
-int updateBudget(struct proc * this, int now){
+int 
+updateBudget(struct proc * this, int now){
 
     this->budget = this->budget - (now - this->cpu_ticks_in);
     if(this->budget <=0){
@@ -710,5 +736,25 @@ int updateBudget(struct proc * this, int now){
         return 1;
     }
     return 0;
+}
+
+// TODO: Promote SLEEPING, RUNNING and RUNNABLE, instead of just RUNNABLE
+// TODO: After promoting the stuff in ptable, just move ready lists upwards.
+// TODO: e.g. 1 gets appended to 0, 2 moves to 1, 3 moves to 2, etc.
+// TODO: Make sure you have the ptable lock here
+// TODO: Do it fas!
+void 
+promote(){
+
+    int i = 1;
+    struct proc * p;
+    for(i = 1;  i < NUM_READY_LISTS; i++){
+        p = dequeue(&ptable.ReadyList[i]);
+        if(p == 0)
+            continue;
+        p->budget = INITBUDGET;
+        p->priority = p->priority - 1;
+        enqueue(&ptable.ReadyList[p->priority - 1], p);
+    }
 }
 

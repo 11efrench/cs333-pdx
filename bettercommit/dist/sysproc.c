@@ -162,19 +162,25 @@ sys_setgid(void)
 
 
 // Project 3
+// TODO: Search through ptable to find the process.
+// TODO: Update process' priority to new value. 
+// TODO: Watch out for RUNNABLE process, be careful with the removal here.
+// TODO: Watch out for old and new priority level
 int 
 sys_setpriority(void){
 
     int pid, priority;
    if(argint(0, &pid) < 0 )
         return -1;
-   if(argint(0, &priority) < 0 && priority <= NUM_READY_LISTS )
+   //TODO: I think you meant 1, and you need to do priority >= NUM_READY_LISTS.
+   //TODO: Also should be an "OR" instead of an "AND"
+   if(argint(0, &priority) < 0 && priority <= NUM_READY_LISTS ) // validate stack space and check queue bounds
         return -1;
-   if(proc->pid == pid){
-       proc->priority = priority;
+   if(proc->pid == pid){   // garuntee this is correct process
+       proc->priority = priority; //set new priority
        return 0;
     }
-   else
+   else //TODO: Like getprocs, create a wrapper in proc.c to do the actual priority setting stuff.
        return -1;
     
     return 0;        //Error not reached!
