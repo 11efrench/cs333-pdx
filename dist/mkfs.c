@@ -16,7 +16,7 @@
 #endif
 
 #define NINODES 200
-
+#define INIT
 // Disk layout:
 // [ boot block | sb block | log | inode blocks | free bit map | data blocks ]
 
@@ -230,6 +230,14 @@ ialloc(ushort type)
   din.type = xshort(type);
   din.nlink = xshort(1);
   din.size = xint(0);
+  
+ #ifdef CS333_P4
+ din.uid = xshort(INITUID);
+ din.gid = xshort(INITGID);
+ din.mode.asInt = xint(INITMODE);
+ #endif
+  
+  
   winode(inum, &din);
   return inum;
 }

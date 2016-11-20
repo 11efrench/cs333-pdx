@@ -1,7 +1,5 @@
 // Segments in proc->gdt.
 #define NSEGS     7
-#define INITUID 0
-#define INITGID 0
 // Per-CPU state
 struct cpu {
   uchar id;                    // Local APIC ID; index into cpus[] below

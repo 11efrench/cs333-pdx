@@ -22,6 +22,11 @@ struct inode {
   short nlink;
   uint size;
   uint addrs[NDIRECT+1];
+  #ifdef CS333_P4
+  ushort uid;         // User ID
+  ushort gid;         // Group ID
+  union mode_t mode;  // Permissions
+  #endif
 };
 #define I_BUSY 0x1
 #define I_VALID 0x2

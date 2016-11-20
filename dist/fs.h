@@ -20,7 +20,32 @@ struct superblock {
   uint bmapstart;    // Block number of first free map block
 };
 
+#ifdef CS333_P4
+union mode_t {
+    struct {
+        uint o_x : 1;  // Other
+        uint o_w : 1;
+        uint o_r : 1;
+        uint g_x : 1;  // Group
+        uint g_w : 1;
+        uint g_r : 1;
+        uint u_x : 1;  // User
+        uint u_w : 1;
+        uint u_r : 1;
+        uint      : 22; // Padding
+        } flags;
+    uint asInt;
+};
+#endif
+
+
+// Project 4
+#ifdef CS333_P4
+#define NDIRECT 10
+#else
 #define NDIRECT 12
+#endif
+
 #define NINDIRECT (BSIZE / sizeof(uint))
 #define MAXFILE (NDIRECT + NINDIRECT)
 
@@ -32,6 +57,11 @@ struct dinode {
   short nlink;          // Number of links to inode in file system
   uint size;            // Size of file (bytes)
   uint addrs[NDIRECT+1];   // Data block addresses
+  #ifdef CS333_P4
+  ushort uid;           // Owner ID
+  ushort gid;           // Group ID
+  union mode_t mode;    // File Permissions
+  #endif
 };
 
 // Inodes per block.

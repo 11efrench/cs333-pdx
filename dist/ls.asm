@@ -99,7 +99,7 @@ ls(char *path)
   bb:	57                   	push   %edi
   bc:	56                   	push   %esi
   bd:	53                   	push   %ebx
-  be:	81 ec 3c 02 00 00    	sub    $0x23c,%esp
+  be:	81 ec 4c 02 00 00    	sub    $0x24c,%esp
   char buf[512], *p;
   int fd;
   struct dirent de;
@@ -127,7 +127,7 @@ ls(char *path)
   
   if(fstat(fd, &st) < 0){
   f7:	83 ec 08             	sub    $0x8,%esp
-  fa:	8d 85 bc fd ff ff    	lea    -0x244(%ebp),%eax
+  fa:	8d 85 b4 fd ff ff    	lea    -0x24c(%ebp),%eax
  100:	50                   	push   %eax
  101:	ff 75 e4             	pushl  -0x1c(%ebp)
  104:	e8 ec 04 00 00       	call   5f5 <fstat>
@@ -151,7 +151,7 @@ ls(char *path)
   }
   
   switch(st.type){
- 138:	0f b7 85 bc fd ff ff 	movzwl -0x244(%ebp),%eax
+ 138:	0f b7 85 b4 fd ff ff 	movzwl -0x24c(%ebp),%eax
  13f:	98                   	cwtl   
  140:	83 f8 01             	cmp    $0x1,%eax
  143:	74 48                	je     18d <ls+0xd5>
@@ -159,9 +159,9 @@ ls(char *path)
  148:	0f 85 7e 01 00 00    	jne    2cc <ls+0x214>
   case T_FILE:
     printf(1, "%s %d %d %d\n", fmtname(path), st.type, st.ino, st.size);
- 14e:	8b bd cc fd ff ff    	mov    -0x234(%ebp),%edi
- 154:	8b b5 c4 fd ff ff    	mov    -0x23c(%ebp),%esi
- 15a:	0f b7 85 bc fd ff ff 	movzwl -0x244(%ebp),%eax
+ 14e:	8b bd c4 fd ff ff    	mov    -0x23c(%ebp),%edi
+ 154:	8b b5 bc fd ff ff    	mov    -0x244(%ebp),%esi
+ 15a:	0f b7 85 b4 fd ff ff 	movzwl -0x24c(%ebp),%eax
  161:	0f bf d8             	movswl %ax,%ebx
  164:	83 ec 0c             	sub    $0xc,%esp
  167:	ff 75 08             	pushl  0x8(%ebp)
@@ -242,7 +242,7 @@ ls(char *path)
  232:	c6 00 00             	movb   $0x0,(%eax)
       if(stat(buf, &st) < 0){
  235:	83 ec 08             	sub    $0x8,%esp
- 238:	8d 85 bc fd ff ff    	lea    -0x244(%ebp),%eax
+ 238:	8d 85 b4 fd ff ff    	lea    -0x24c(%ebp),%eax
  23e:	50                   	push   %eax
  23f:	8d 85 e0 fd ff ff    	lea    -0x220(%ebp),%eax
  245:	50                   	push   %eax
@@ -262,9 +262,9 @@ ls(char *path)
  26b:	eb 3e                	jmp    2ab <ls+0x1f3>
       }
       printf(1, "%s %d %d %d\n", fmtname(buf), st.type, st.ino, st.size);
- 26d:	8b bd cc fd ff ff    	mov    -0x234(%ebp),%edi
- 273:	8b b5 c4 fd ff ff    	mov    -0x23c(%ebp),%esi
- 279:	0f b7 85 bc fd ff ff 	movzwl -0x244(%ebp),%eax
+ 26d:	8b bd c4 fd ff ff    	mov    -0x23c(%ebp),%edi
+ 273:	8b b5 bc fd ff ff    	mov    -0x244(%ebp),%esi
+ 279:	0f b7 85 b4 fd ff ff 	movzwl -0x24c(%ebp),%eax
  280:	0f bf d8             	movswl %ax,%ebx
  283:	83 ec 0c             	sub    $0xc,%esp
  286:	8d 85 e0 fd ff ff    	lea    -0x220(%ebp),%eax
