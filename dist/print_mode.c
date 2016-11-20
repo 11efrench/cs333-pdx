@@ -1,5 +1,8 @@
 #ifdef CS333_P4
 // this is an ugly series of if statements but it works
+#include "types.h"
+#include "stat.h"
+#include "user.h"
 void
 print_mode(struct stat* st)
 {

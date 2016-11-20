@@ -21,7 +21,7 @@
 8010c5c0 panicked
 8010c5e0 cons
 80100317 printint
-8010a004 digits.1620
+8010a004 digits.1621
 80100792 consputc
 8010a000 crt
 80100601 cgaputc

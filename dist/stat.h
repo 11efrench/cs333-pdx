@@ -20,6 +20,7 @@ union stat_mode_t {
         uint u_x : 1;  // User
         uint u_w : 1;
         uint u_r : 1;
+        uint setuid : 1; 
         uint      : 22; // Padding
         } flags;
     uint asInt;
