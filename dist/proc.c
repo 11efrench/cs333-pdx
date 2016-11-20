@@ -8,7 +8,7 @@
 #include "spinlock.h"
 #include "asm.h"
 #include "uproc.h"
-
+// This comment is to check if Git Branch Project 3 is updating properly
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
