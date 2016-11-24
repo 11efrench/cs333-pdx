@@ -40,3 +40,7 @@ SYSCALL(getppid)
 SYSCALL(setuid)
 SYSCALL(setgid)
 SYSCALL(getprocs)
+
+SYSCALL(chown)
+SYSCALL(chgrp)
+SYSCALL(chmod)

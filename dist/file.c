@@ -153,3 +153,42 @@ filewrite(struct file *f, char *addr, int n)
   panic("filewrite");
 }
 
+int
+changeowner(struct inode* ip,  int nuid)
+{
+
+    begin_op();       // Lock up inode, check for validation, copy and update
+    ilock(ip);
+    ip->uid = nuid;
+    iupdate(ip);
+    iunlockput(ip);
+    end_op();
+    return 0;
+
+
+}
+
+int
+changegroup(struct inode* ip, int ngid)
+{
+    begin_op();       // Lock up inode, check for validation, copy and update
+    ilock(ip);
+    ip->gid = ngid;
+    iupdate(ip);
+    iunlockput(ip);
+    end_op();
+    return 0;
+
+}
+
+int
+changemode(struct inode* ip,  int mode)
+{
+    begin_op();       // Lock up inode, check for validation, copy and update
+    ilock(ip);
+    ip->mode.asInt = mode;
+    iupdate(ip);
+    iunlockput(ip);
+    end_op();
+    return 0;
+}

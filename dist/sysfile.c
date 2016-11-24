@@ -439,3 +439,65 @@ sys_pipe(void)
   fd[1] = fd1;
   return 0;
 }
+
+#ifdef CS333_P4
+int
+sys_chown(void)
+{
+    char* path;
+    struct inode* ip;
+    int nuid;
+    
+    // error checking
+    if(argstr(0, &path) < 0)
+        return -1;
+    if(argint(1, &nuid) < 0 || argint(1, &nuid) > 32767)
+        return -1;
+    ip = namei(path);
+    if(ip == 0){
+      return -1;
+    }
+    return changeowner(ip, nuid);
+}
+
+int
+sys_chgrp(void)
+{ 
+    char* path;
+    struct inode* ip;
+    int ngid;
+    
+    // error checking
+    if(argstr(0, &path) < 0)
+        return -1;
+    if(argint(1, &ngid) < 0 || argint(1, &ngid) > 32767)
+        return -1;
+    ip = namei(path);
+    if(ip == 0){
+      return -1;
+    }
+    return changegroup(ip, ngid);
+
+}
+
+int
+sys_chmod(void)
+{
+    char* path;
+    struct inode* ip;
+    int mode;
+    
+    // error checking
+    if(argstr(0, &path) < 0)
+        return -1;
+    if(argint(1, &mode) < 0 || argint(1, &mode) > 01755 )
+        return -1;
+    
+    ip = namei(path);
+    if(ip == 0){
+      return -1;
+    }
+    return changemode(ip, mode);
+    
+}
+#endif

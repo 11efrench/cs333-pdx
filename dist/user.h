@@ -37,6 +37,10 @@ int setuid(uint);
 int setgid(uint);
 int getprocs(uint max, struct uproc* table);
 
+int chown(char* path, int nuid);
+int chgrp(char* path, int ngid);
+int chmod(char* path, int nmode);
+
 // ulib.c
 int stat(char*, struct stat*);
 char* strcpy(char*, char*);

@@ -11,6 +11,6 @@
 #define LOGSIZE      (MAXOPBLOCKS*3)  // max data blocks in on-disk log
 #define NBUF         (MAXOPBLOCKS*3)  // size of disk block cache
 #define FSSIZE       2000  // size of file system in blocks
-#define INITUID 0
-#define INITGID 0
-#define INITMODE 0x0755
+#define INITUID 1
+#define INITGID 1
+#define INITMODE 493

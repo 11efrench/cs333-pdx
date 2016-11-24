@@ -42,7 +42,7 @@ forktest(void)
 
   printf(1, "fork test\n");
   2f:	83 ec 08             	sub    $0x8,%esp
-  32:	68 4c 04 00 00       	push   $0x44c
+  32:	68 64 04 00 00       	push   $0x464
   37:	6a 01                	push   $0x1
   39:	e8 c2 ff ff ff       	call   0 <printf>
   3e:	83 c4 10             	add    $0x10,%esp
@@ -86,7 +86,7 @@ forktest(void)
     printf(1, "fork claimed to work N times!\n", N);
   7c:	83 ec 04             	sub    $0x4,%esp
   7f:	68 e8 03 00 00       	push   $0x3e8
-  84:	68 58 04 00 00       	push   $0x458
+  84:	68 70 04 00 00       	push   $0x470
   89:	6a 01                	push   $0x1
   8b:	e8 70 ff ff ff       	call   0 <printf>
   90:	83 c4 10             	add    $0x10,%esp
@@ -101,7 +101,7 @@ forktest(void)
   9f:	79 17                	jns    b8 <forktest+0x8f>
       printf(1, "wait stopped early\n");
   a1:	83 ec 08             	sub    $0x8,%esp
-  a4:	68 77 04 00 00       	push   $0x477
+  a4:	68 8f 04 00 00       	push   $0x48f
   a9:	6a 01                	push   $0x1
   ab:	e8 50 ff ff ff       	call   0 <printf>
   b0:	83 c4 10             	add    $0x10,%esp
@@ -127,7 +127,7 @@ forktest(void)
   ca:	74 17                	je     e3 <forktest+0xba>
     printf(1, "wait got too many\n");
   cc:	83 ec 08             	sub    $0x8,%esp
-  cf:	68 8b 04 00 00       	push   $0x48b
+  cf:	68 a3 04 00 00       	push   $0x4a3
   d4:	6a 01                	push   $0x1
   d6:	e8 25 ff ff ff       	call   0 <printf>
   db:	83 c4 10             	add    $0x10,%esp
@@ -137,7 +137,7 @@ forktest(void)
   
   printf(1, "fork test OK\n");
   e3:	83 ec 08             	sub    $0x8,%esp
-  e6:	68 9e 04 00 00       	push   $0x49e
+  e6:	68 b6 04 00 00       	push   $0x4b6
   eb:	6a 01                	push   $0x1
   ed:	e8 0e ff ff ff       	call   0 <printf>
   f2:	83 c4 10             	add    $0x10,%esp
@@ -751,3 +751,22 @@ SYSCALL(getprocs)
  442:	b8 1d 00 00 00       	mov    $0x1d,%eax
  447:	cd 40                	int    $0x40
  449:	c3                   	ret    
+
+0000044a <chown>:
+
+SYSCALL(chown)
+ 44a:	b8 1e 00 00 00       	mov    $0x1e,%eax
+ 44f:	cd 40                	int    $0x40
+ 451:	c3                   	ret    
+
+00000452 <chgrp>:
+SYSCALL(chgrp)
+ 452:	b8 1f 00 00 00       	mov    $0x1f,%eax
+ 457:	cd 40                	int    $0x40
+ 459:	c3                   	ret    
+
+0000045a <chmod>:
+SYSCALL(chmod)
+ 45a:	b8 20 00 00 00       	mov    $0x20,%eax
+ 45f:	cd 40                	int    $0x40
+ 461:	c3                   	ret    

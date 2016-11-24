@@ -208,6 +208,11 @@ iupdate(struct inode *ip)
   dip->minor = ip->minor;
   dip->nlink = ip->nlink;
   dip->size = ip->size;
+  #ifdef CS333_P4
+  dip->uid = ip->uid;
+  dip->gid = ip->gid;
+  dip->mode.asInt = ip->mode.asInt;
+  #endif 
   memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
   log_write(bp);
   brelse(bp);

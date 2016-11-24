@@ -180,6 +180,9 @@ UPROGS=\
         _testxid\
 	_ps\
 	_time\
+	_chown\
+	_chgrp\
+	_chmod\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

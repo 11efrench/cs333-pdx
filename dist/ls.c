@@ -3,7 +3,9 @@
 #include "user.h"
 #include "fs.h"
 
+#ifdef CS333_P4
 extern void print_mode(struct stat* st);
+#endif 
 
 char*
 fmtname(char *path)

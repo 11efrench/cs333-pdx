@@ -101,7 +101,7 @@ int sys_date(void){
 
     struct rtcdate* d;
 
-    if(argptr(0, (char**)&d, sizeof(*d)) <0) //void * is a security issue
+    if(argptr(0, (char**)&d, sizeof(*d)) <0) 
         return -1;
    
     cmostime(d);
@@ -159,4 +159,5 @@ sys_setgid(void)
     else 
         return 0;
 }
+
 

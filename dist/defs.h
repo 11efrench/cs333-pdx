@@ -32,6 +32,9 @@ void            fileinit(void);
 int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
 int             filewrite(struct file*, char*, int n);
+int             changeowner(struct inode* ip, int nuid);
+int             changegroup(struct inode* ip, int ngid);
+int             changemode(struct inode*  ip, int mode);
 
 // fs.c
 void            readsb(int dev, struct superblock *sb);

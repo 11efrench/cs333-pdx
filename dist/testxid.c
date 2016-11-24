@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     printf(2, "My parent process is: %d\n", ppid);
     printf(2, "Test Over\n");
 
-    return 0;
+    exit();
 
     
 }
